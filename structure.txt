@@ -1,0 +1,30 @@
+pipeline-infer/
+├── docs/
+│   └── 推理流水线框架设计文档.md
+├── src/
+│   ├── __init__.py
+│   ├── pipeline.py              # 流水线主类实现
+│   ├── operators/              # 算子实现
+│   │   ├── __init__.py
+│   │   ├── base.py            # 基础算子类
+│   │   ├── source.py          # 数据源算子
+│   │   ├── map.py             # 映射算子
+│   │   └── filter.py          # 过滤算子
+│   ├── executors/             # 执行器实现
+│   │   ├── __init__.py
+│   │   ├── base.py            # 基础执行器接口
+│   │   └── parallel.py        # 并行执行器实现
+│   └── events/                # 事件系统
+│       ├── __init__.py
+│       ├── events.py          # 事件定义
+│       └── listener.py        # 事件监听器
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py           # 测试配置和fixtures
+│   ├── test_pipeline.py      # 流水线测试
+│   ├── test_operators.py     # 算子测试
+│   └── test_events.py        # 事件系统测试
+├── examples/
+│   ├── __init__.py
+│   └── parallel_processing.py # 并行处理示例
+└── requirements.txt 
