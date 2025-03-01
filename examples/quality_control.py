@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from src.pipeline import Pipeline
 from src.operators.map import MapLikeOperator
 from src.events.listener import ConsoleEventListener
@@ -32,8 +33,15 @@ def make_quality_decision(results: list) -> dict:
 
 def main():
     # 创建流水线
+    # 构建图片路径
+    image_path = os.path.join(os.path.dirname(__file__), "resources", "小鱼儿.jpg")
+    
+    # 检查文件是否存在
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"图片文件不存在: {image_path}")
+    
     pipeline = (Pipeline("quality_check")
-        .read_image("reader", "test_image.jpg")
+        .read_image("reader", image_path)
         .branch(
             # 清晰度检查
             MapLikeOperator("clarity", check_clarity),
@@ -55,4 +63,4 @@ def main():
     print(f"Quality check results: {results['decision']}")
 
 if __name__ == "__main__":
-    main() 
+    main()

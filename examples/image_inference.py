@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from src.pipeline import Pipeline
 from src.operators.source import SourceOperator
 from src.operators.map import MapLikeOperator
@@ -30,8 +31,15 @@ def is_valid_tile(tile: np.ndarray) -> bool:
 
 def main():
     # 创建流水线
+    # 构建图片路径
+    image_path = os.path.join(os.path.dirname(__file__), "resources", "美国队长.jpg")
+    
+    # 检查文件是否存在
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"图片文件不存在: {image_path}")
+    
     pipeline = (Pipeline("image_inference")
-        .read_image("reader", "large_image.jpg")  # 使用 read_image
+        .read_image("reader", image_path)  # 使用 read_image
         .map("image_splitter", split_image)
         .filter("valid_tiles", is_valid_tile)  # 过滤无效的图像块
         .map("inferencer", mock_inference, parallel_degree=4))
@@ -46,4 +54,4 @@ def main():
     print(f"处理完成，共生成 {len(results['inferencer'])} 个结果")
 
 if __name__ == "__main__":
-    main() 
+    main()

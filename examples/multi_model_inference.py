@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from src.pipeline import Pipeline
 from src.operators.map import MapLikeOperator
 from src.events.listener import ConsoleEventListener
@@ -35,8 +36,15 @@ def main():
     segmentation_model = MockModel("Segmentation")
     
     # 创建流水线
+    # 构建图片路径
+    image_path = os.path.join(os.path.dirname(__file__), "resources", "刘德华.jpg")
+    
+    # 检查文件是否存在
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"图片文件不存在: {image_path}")
+    
     pipeline = (Pipeline("multi_model")
-        .read_image("reader", "example.jpg")
+        .read_image("reader", image_path)
         .map("preprocess", preprocess_image)
         .branch(
             # 分类模型
@@ -59,4 +67,4 @@ def main():
     print(f"Results: {results}")
 
 if __name__ == "__main__":
-    main() 
+    main()

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from src.pipeline import Pipeline
 from src.operators.map import MapLikeOperator
 from src.events.listener import ConsoleEventListener
@@ -20,8 +21,15 @@ def fusion_multi_scale(results: list) -> np.ndarray:
 
 def main():
     # 创建流水线
+    # 构建图片路径
+    image_path = os.path.join(os.path.dirname(__file__), "resources", "遥感飞机.jpg")
+    
+    # 检查文件是否存在
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"图片文件不存在: {image_path}")
+    
     pipeline = (Pipeline("multi_scale")
-        .read_image("reader", "large_image.jpg")  # 使用 read_image
+        .read_image("reader", image_path)  # 使用 read_image
         .branch(
             # 小尺度处理分支 (0.5x)
             MapLikeOperator("small_scale", resize_with_scale(0.5)),
@@ -45,4 +53,4 @@ def main():
     cv2.imwrite("multi_scale_result.jpg", results["fusion"])
 
 if __name__ == "__main__":
-    main() 
+    main()
