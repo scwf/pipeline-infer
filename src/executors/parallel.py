@@ -2,7 +2,6 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Any, Callable, Iterator, Iterable
 from .base import Executor
 from itertools import islice
-from concurrent.futures import as_completed
 
 class ThreadExecutor(Executor):
     """线程池执行器"""
@@ -20,9 +19,7 @@ class ThreadExecutor(Executor):
                 for i in range(0, len(data), self.batch_size):
                     batch = data[i:i + self.batch_size]
                     futures = [executor.submit(func, item) for item in batch]
-                    # 使用as_completed按照任务完成顺序处理结果，而不是按照提交顺序
-                    for completed_future in as_completed(futures):
-                        results.append(completed_future.result())
+                    results.extend(f.result() for f in futures)
                 yield results
             else:
                 # 处理单个数据
@@ -45,9 +42,7 @@ class ProcessExecutor(Executor):
                 for i in range(0, len(data), self.batch_size):
                     batch = data[i:i + self.batch_size]
                     futures = [executor.submit(func, item) for item in batch]
-                    # 使用as_completed按照任务完成顺序处理结果，而不是按照提交顺序
-                    for completed_future in as_completed(futures):
-                        results.append(completed_future.result())
+                    results.extend(f.result() for f in futures)
                 yield results
             else:
                 # 处理单个数据
