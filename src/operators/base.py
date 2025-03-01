@@ -9,16 +9,18 @@ class PipelineOperator(ABC):
     
     def __init__(self, name: str, executor: Optional[Executor] = None):
         self.name = name
-        self.event_listeners: list[EventListener] = []
+        self.listeners: list[EventListener] = []  # 统一使用一个监听器列表
         self.executor = executor or SequentialExecutor()
     
     def add_listener(self, listener: EventListener) -> None:
         """添加事件监听器"""
-        self.event_listeners.append(listener)
+        # 防止重复添加同一个监听器
+        if listener not in self.listeners:
+            self.listeners.append(listener)
     
     def notify_listeners(self, event: PipelineEvent) -> None:
         """通知所有监听器"""
-        for listener in self.event_listeners:
+        for listener in self.listeners:
             listener.on_event(event)
     
     def set_executor(self, executor: Executor) -> 'PipelineOperator':
@@ -37,4 +39,4 @@ class PipelineOperator(ABC):
     @abstractmethod
     def _process_impl(self, data: Any) -> Any:
         """具体的处理逻辑，由子类实现"""
-        pass 
+        pass

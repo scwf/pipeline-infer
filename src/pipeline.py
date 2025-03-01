@@ -4,8 +4,10 @@ from .operators.base import PipelineOperator
 from .operators.source import SourceOperator, ImageSourceOperator
 from .operators.map import MapLikeOperator
 from .events.events import ProgressEvent
+from .events.listener import EventListener
 from .operators.filter import FilterOperator
 from .executors.base import Executor
+from .events.performance import PerformanceMonitor
 
 T = TypeVar('T')
 
@@ -17,6 +19,7 @@ class Pipeline(Generic[T]):
         self.operators: Dict[str, PipelineOperator] = {}
         self.edges: Dict[str, List[str]] = defaultdict(list)
         self._last_added: Optional[str] = None
+        self.listeners: List[EventListener] = []
     
     def source(self, name: str, iterator: Iterator[Any]) -> 'Pipeline[T]':
         """添加通用数据源算子
@@ -75,15 +78,26 @@ class Pipeline(Generic[T]):
             parallel_degree,
             executor_type
         ))
-    
     def then(self, operator: PipelineOperator) -> 'Pipeline[T]':
         """流式添加算子并自动连接"""
         self.add_operator(operator)
         if self._last_added:
             self.connect(self._last_added, operator.name)
         self._last_added = operator.name
+        # 自动添加所有监听器到新算子
+        for listener in self.listeners:
+            operator.add_listener(listener)
         return self
-    
+        
+    def add_listener(self, listener: EventListener) -> 'Pipeline[T]':
+        """添加全局事件监听器"""
+        # 检查是否已经添加过该监听器
+        if listener not in self.listeners:
+            self.listeners.append(listener)
+            # 将监听器添加到所有现有算子
+            for operator in self.operators.values():
+                operator.add_listener(listener)
+        return self
     def branch(self, *operators: PipelineOperator) -> 'Pipeline[T]':
         """并行分支处理"""
         if not self._last_added:
@@ -154,10 +168,18 @@ class Pipeline(Generic[T]):
                 else:
                     input_data = dependencies
             
+            # 开始性能监控
+            monitor = PerformanceMonitor()
+            monitor.start()
+            
             # 执行当前算子
             result = next(op.process(input_data))
             results[op_name] = result
             executed.add(op_name)
+            
+            # 停止性能监控并发送事件
+            perf_event = monitor.stop(op_name)
+            op.notify_listeners(perf_event)
             
             # 更新进度
             progress = len(executed) / len(self.operators)
@@ -177,4 +199,4 @@ class Pipeline(Generic[T]):
         for leaf in leaves:
             execute_op(leaf, initial_data)
         
-        return results 
+        return results

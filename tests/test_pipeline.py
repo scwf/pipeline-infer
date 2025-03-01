@@ -76,8 +76,7 @@ class TestPipeline:
         
         # 添加监听器
         listener = TestListener()
-        for op in pipeline.operators.values():
-            op.add_listener(listener)
+        pipeline.add_listener(listener)
         
         # 执行流水线
         pipeline.execute()
