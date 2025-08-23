@@ -1,3 +1,4 @@
+# Python 相关
 .venv/
 .vscode/
 .pytest_cache/
@@ -5,3 +6,31 @@ __pycache__/
 */__pycache__/
 *.py[cod]
 *$py.class
+
+# 性能测试输出目录（自动生成）
+serial_output/
+pipeline_output/
+multiprocess_output/
+
+# 性能测试报告文件（自动生成）
+final_performance_report.json
+performance_report.json
+multiprocess_comparison.json
+performance_comparison.png
+
+# 临时和缓存文件
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 虚拟环境
+venv/
+env/
+ENV/
