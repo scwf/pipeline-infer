@@ -1,0 +1,68 @@
+{
+  "system_info": {
+    "cpu_count": 4,
+    "test_timestamp": "2025-08-23 11:13:19",
+    "python_version": "3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]"
+  },
+  "test_results": [
+    {
+      "method": "串行处理",
+      "total_time": 0.694786548614502,
+      "data_size": 25000,
+      "success": true
+    },
+    {
+      "method": "流水线并行",
+      "total_time": 0.2770850658416748,
+      "data_size": 25000,
+      "success": true
+    },
+    {
+      "method": "多进程并行",
+      "total_time": 2.0576376914978027,
+      "data_size": 25000,
+      "success": true
+    },
+    {
+      "method": "串行处理",
+      "total_time": 0.6959311962127686,
+      "data_size": 50000,
+      "success": true
+    },
+    {
+      "method": "流水线并行",
+      "total_time": 0.2704343795776367,
+      "data_size": 50000,
+      "success": true
+    },
+    {
+      "method": "多进程并行",
+      "total_time": 2.0150890350341797,
+      "data_size": 50000,
+      "success": true
+    },
+    {
+      "method": "串行处理",
+      "total_time": 0.7117364406585693,
+      "data_size": 100000,
+      "success": true
+    },
+    {
+      "method": "流水线并行",
+      "total_time": 0.278383731842041,
+      "data_size": 100000,
+      "success": true
+    },
+    {
+      "method": "多进程并行",
+      "total_time": 2.0499348640441895,
+      "data_size": 100000,
+      "success": true
+    }
+  ],
+  "summary": {
+    "total_tests": 9,
+    "successful_tests": 9,
+    "failed_tests": 0
+  }
+}
